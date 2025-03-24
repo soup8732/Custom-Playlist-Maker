@@ -32,7 +32,7 @@
 
 1. Run the main script to start the conversion process:
     ```bash
-    python main.py
+    python ytconverter.py
     ```
 2. Follow the on-screen instructions to input the YouTube URL and choose the desired output format.
 
