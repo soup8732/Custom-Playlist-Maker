@@ -4,7 +4,7 @@ import random
 import subprocess as s
 import re
 import json
-
+import shutil
 try:
     from colored import fg, attr
     f = fg(117)  # Colors
@@ -12,6 +12,8 @@ try:
     b = attr(0)
     import fontstyle as f
     import yt_dlp
+    from yt_dlp import YoutubeDL
+    from yt_dlp.utils import DownloadError
 except ImportError:
     print('Installing required packages\n')
     os.system("pip install fontstyle")
@@ -62,12 +64,7 @@ text1 = f.apply("Enter the url of the video you want \nto download  ", "/green/b
 text2 = f.apply("Enter the destination path where you want to save this mp3  ", "/yellow/bold")
 text3 = f.apply("(Or leave blank to save in current directory)", "/yellow/bold")
 text4 = f.apply("Taken time to download =", "/cyan/bold")
-#################
-
-
-
-
-
+################
 
 
 
@@ -77,9 +74,10 @@ text4 = f.apply("Taken time to download =", "/cyan/bold")
 
 
 def main_mp4():
-    print('\n' + f.apply("Enter the URL of the video you want to download:", "/green/bold"))
+    print('\n' + f.apply("Enter the URL of the video you want to download as MP4:", "/green/bold"))
     url = input(">> ")
 
+    # Validate YouTube URL
     url_pattern = re.compile(r'^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$')
     if not url_pattern.match(url):
         print(f.apply("Invalid URL. Please enter a valid YouTube URL.", "/red/bold"))
@@ -87,45 +85,51 @@ def main_mp4():
 
     url = url.strip()
 
-    print("\nFetching available formats...\n")
+    print(f.apply("\nFetching available video formats...\n", "/cyan/bold"))
 
+    # Fetch available formats using yt-dlp
     try:
         process = s.Popen(['yt-dlp', '--list-formats', url], stdout=s.PIPE, stderr=s.PIPE)
         stdout, stderr = process.communicate()
+        if stderr:
+            print(f.apply(f"Warning: {stderr.decode('utf-8')}", "/yellow/bold"))
         formats_output = stdout.decode('utf-8')
         print(formats_output)
     except Exception as e:
         print(f.apply(f"Error listing formats: {e}", "/red/bold"))
         return
 
+    # Extract video information
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
     }
 
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             formats = info.get('formats', [])
-    except yt_dlp.utils.DownloadError as e:
+    except DownloadError as e:
         print(f.apply(f"An error occurred: {e}", "/red/bold"))
-        print(f.apply(f"Error Details: {e}", "/red/bold"))
         return
 
+    # Filter video and audio formats
     video_formats = [f for f in formats if f.get('vcodec') != 'none']
     audio_formats = [f for f in formats if f.get('acodec') != 'none' and f.get('vcodec') == 'none']
 
-    print("\nAvailable Formats:\n")
+    # Display available formats
+    print(f.apply("\nAvailable Formats:\n", "/cyan/bold"))
     for i, fmt in enumerate(formats):
         res = fmt.get('resolution', 'Audio Only') if fmt.get('vcodec') != 'none' else 'Audio Only'
         ext = fmt.get('ext', 'Unknown')
         acodec = fmt.get('acodec', 'None')
         vcodec = fmt.get('vcodec', 'None')
-        print(f"[{i + 1}] {res} ({ext}) - Format ID: {fmt['format_id']} - Audio: {acodec} - Video: {vcodec}")
+        print(f"{f.apply(f'[{i + 1}]', '/yellow/bold')} {f.apply(res, '/cyan')} ({f.apply(ext, '/magenta')}) - Format ID: {f.apply(fmt['format_id'], '/green')} - Audio: {f.apply(acodec, '/magenta')} - Video: {f.apply(vcodec, '/magenta')}")
 
+    # User selects format
     while True:
         try:
-            choice = int(input("\nEnter the number of your preferred format: ")) - 1
+            choice = int(input(f.apply("\nEnter the number of your preferred format: ", "/green/bold"))) - 1
             if 0 <= choice < len(formats):
                 selected_format = formats[choice]
                 break
@@ -138,67 +142,106 @@ def main_mp4():
     has_audio = selected_format.get('acodec') != 'none'
     has_video = selected_format.get('vcodec') != 'none'
 
+    # Handle audio separately if not present in selected format
     audio_downloaded = False
+    audio_path = None
     if has_video and not has_audio:
         print(f.apply("\nSelected format has NO AUDIO. Attempting to download audio separately...", "/yellow/bold"))
-        print(f.apply("No suitable audio format found. Downloading MP3 audio instead.", "/yellow/bold"))
         try:
             audio_destination = "/storage/emulated/0/Download/audio_temp"
             os.makedirs(audio_destination, exist_ok=True)
-            s.call(['yt-dlp', '-x', '--audio-format', 'mp3', '-o', os.path.join(audio_destination, '%(title)s.%(ext)s'), url])
+            audio_filename = os.path.join(audio_destination, '%(title)s.%(ext)s')
+            s.call(['yt-dlp', '-x', '--audio-format', 'mp3', '-o', audio_filename, url])
+
+            # Locate the downloaded audio file
+            for root, _, files in os.walk(audio_destination):
+                for file in files:
+                    if file.endswith(".mp3"):
+                        audio_path = os.path.join(root, file)
+                        break
+
+            if not audio_path or not os.path.exists(audio_path):
+                print(f.apply(f"Error: Audio file not found in {audio_destination}. Please check if the file was downloaded correctly.", "/red/bold"))
+                return
+
             print(f.apply("MP3 audio downloaded successfully.", "/green/bold"))
             audio_downloaded = True
-            audio_path = os.path.join(audio_destination, f"{info['title']}.mp3")
-            if not os.path.exists(audio_path):
-                print(f.apply(f'Audio file not found at: {audio_path}', '/red/bold'))
-                return
         except Exception as e:
             print(f.apply(f"Error downloading MP3 audio: {e}", "/red/bold"))
             return
 
-    print(f.apply("\nStarting Download...\n", "/yellow/bold"))
+    print(f.apply("\nStarting Video Download...\n", "/cyan/bold"))
     time1 = int(time.time())
 
+    # Define download path
     destination = "/storage/emulated/0/Download/videos"
+    os.makedirs(destination, exist_ok=True)
+
+    video_path = os.path.join(destination, f"{info['title']}.mp4")
     ydl_opts = {
         'format': selected_format_id,
-        'outtmpl': os.path.join(destination, '%(title)s.%(ext)s'),
+        'outtmpl': video_path,
     }
 
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        print(f.apply(" Video has been successfully downloaded.", "/green/bold"))
+        print(f.apply("Video has been successfully downloaded.", "/green/bold"))
     except Exception as e:
         print(f.apply(f"An error occurred: {e}", "/red/bold"))
-        print(f.apply(f"Error Details: {e}", "/red/bold"))
         return
 
     time2 = int(time.time())
     ftime = time2 - time1
-    print(f.apply("Taken time to download:", "/cyan/bold"), f.apply(f"{ftime} sec", "/cyan/bold"))
+    print(f.apply("Time taken to download:", "/cyan/bold"), f.apply(f"{ftime} sec", "/cyan"))
 
+    # Merge audio and video if necessary
     if audio_downloaded:
         print(f.apply("Merging audio and video...", "/yellow/bold"))
-        video_path = f"/storage/emulated/0/Download/videos/{info['title']}.mp4"
-        audio_path = f"/storage/emulated/0/Download/audio_temp/{info['title']}.mp3"
-        merged_path = f"/storage/emulated/0/Download/videos/{info['title']}_merged.mp4"
-        print(f"Video path: {video_path}")
-        print(f"Audio path: {audio_path}")
+        merged_path = os.path.join(destination, f"{info['title']}_merged.mp4")
         try:
-            ffmpeg_command = ['ffmpeg', '-i', video_path, '-i', audio_path, '-c:v', 'copy', '-c:a', 'aac', merged_path]
-            process = s.Popen(ffmpeg_command, stdout=s.PIPE, stderr=s.PIPE)
-            stdout, stderr = process.communicate()
+            # Add timeout to prevent hanging
+            ffmpeg_command = [
+                'ffmpeg',
+                '-y',  # Overwrite output files without asking
+                '-i', video_path,
+                '-i', audio_path,
+                '-c:v', 'copy',
+                '-c:a', 'aac',
+                merged_path,
+            ]
+            print(f.apply(f"Executing: {' '.join(ffmpeg_command)}", "/cyan/bold"))
+
+            # Use subprocess to execute the command and capture output
+            process = s.Popen(ffmpeg_command, stdout=s.PIPE, stderr=s.PIPE, text=True)
+            stdout, stderr = process.communicate(timeout=300)  # Timeout after 5 minutes
+
+            # Check return code
             if process.returncode == 0:
                 print(f.apply("Audio and video merged successfully.", "/green/bold"))
                 os.remove(video_path)
                 os.remove(audio_path)
             else:
-                print(f.apply(f"Error merging audio and video: {stderr.decode('utf-8')}", "/red/bold"))
+                print(f.apply(f"Error merging audio and video: {stderr}", "/red/bold"))
+                print(f.apply(f"ffmpeg stdout: {stdout}", "/yellow"))
+        except s.TimeoutExpired:
+            process.kill()
+            print(f.apply("The merging process timed out. Please check your files manually.", "/red/bold"))
         except Exception as e:
             print(f.apply(f"Error merging audio and video: {e}", "/red/bold"))
+    else:
+        print(f.apply("No audio merging required.", "/yellow/bold"))
+
+    # Cleanup temporary files
+    temp_audio_dir = "/storage/emulated/0/Download/audio_temp"
+    if os.path.exists(temp_audio_dir):
+        shutil.rmtree(temp_audio_dir, ignore_errors=True)
+        print(f.apply("Temporary audio files cleaned up.", "/cyan/bold"))
 
 
+
+
+ 
 ##############
 
 
