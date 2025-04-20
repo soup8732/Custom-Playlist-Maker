@@ -19,7 +19,14 @@
     ```bash
     git clone https://github.com/kaifcodec/ytconverter.git
     ```
-2. Navigate to the project directory:
+
+2. Give storage permission:
+    ```bash
+    termux-setup-storage
+    ```
+
+    
+4. Navigate to the project directory:
     ```bash
     cd ytconverter
     ```
