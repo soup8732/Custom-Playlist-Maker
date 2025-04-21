@@ -1,71 +1,75 @@
 # ytconverter
 
-`ytconverter` is a Python-based project developed by [kaifcodec](https://github.com/kaifcodec) designed to provide a robust tool for converting YouTube videos into various formats. This tool simplifies the process of downloading and converting videos, making it accessible for users who need to handle YouTube content efficiently.
-![Screenshot_20250421-091445~3](https://github.com/user-attachments/assets/5e27f2e3-a40d-49dc-87e4-d69ce28d575e)
+`ytconverter` is a Python-based project developed by [kaifcodec](https://github.com/kaifcodec) designed to provide a robust tool for converting YouTube videos into various formats. This tool simplifies the process of downloading and converting videos from YouTube.
 
+![Screenshot 1](https://github.com/user-attachments/assets/5e27f2e3-a40d-49dc-87e4-d69ce28d575e)
+![Screenshot 2](https://github.com/user-attachments/assets/8e9d00ce-b698-4b1f-8870-badd5d274442)
 
-![Screenshot_20250420-110350](https://github.com/user-attachments/assets/8e9d00ce-b698-4b1f-8870-badd5d274442)
+---
+<p align="center">
+  <img src="https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif" width="400" height=350 />
+  <img src="https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif" width="400" />
+</p>
+---
 
+## Dynamic Stats  
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=kaifcodec&show_icons=true&theme=radical)  
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=kaifcodec&layout=compact&theme=radical)  
+
+---
 
 ## Contact for any error or issue:
-  
 - kaif.repo.official@gmail.com
 
 ## Features
-
 - **Video Downloading**: Fetch videos directly from YouTube.
 - **Format Conversion**: Convert downloaded videos into different formats such as MP3, MP4, etc.
 - **Metadata Handling**: Extract and manage metadata associated with YouTube videos.
 
-## Requirements
+---
 
+![Code GIF](https://media.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif)
+---
+
+## Requirements
 - Python 3.x
 - Required Python libraries (listed in `requirements.txt`)
 
-## Installation Termux
-
-
-1. Install python and update termux:
+## Installation (Termux)
+1. Install Python and update Termux:
    ```bash
-    pkg update -y && pkg upgrade -y && pkg install python
-    ```
-2. Install git:
+   pkg update -y && pkg upgrade -y && pkg install python
+   ```
+2. Install Git:
    ```bash
-    pkg install git
-    ```
-3. Install curl :
+   pkg install git
+   ```
+3. Install Curl:
    ```bash
-    pkg install curl
-    ```
-
+   pkg install curl
+   ```
 4. Clone the repository:
-    ```bash
-    git clone https://github.com/kaifcodec/ytconverter.git
-    ```
-
+   ```bash
+   git clone https://github.com/kaifcodec/ytconverter.git
+   ```
 5. Give storage permission:
-    ```bash
-    termux-setup-storage
-    ```
-
-    
+   ```bash
+   termux-setup-storage
+   ```
 6. Navigate to the project directory:
-    ```bash
-    cd ytconverter
-    ```
+   ```bash
+   cd ytconverter
+   ```
 
 ## Usage
-
 1. Run the main script to start the conversion process:
-    ```bash
-    python ytconverter.py
-    ```
+   ```bash
+   python ytconverter.py
+   ```
 2. Follow the on-screen instructions to input the YouTube URL and choose the desired output format.
 
 ## Contributing
-
 Contributions are welcome! Please follow these steps:
-
 1. Fork the repository.
 2. Create a new branch (`git checkout -b feature-branch`).
 3. Make your changes.
@@ -74,9 +78,10 @@ Contributions are welcome! Please follow these steps:
 6. Open a Pull Request.
 
 ## License
-
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contact
-
 For any questions or feedback, please open an issue or contact [kaifcodec](https://github.com/kaifcodec).
+
+---
+
