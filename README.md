@@ -17,7 +17,7 @@
 - Python 3.x
 - Required Python libraries (listed in `requirements.txt`)
 
-## Installation (Termux)
+## Installation (Termux/LinuxOs)
 1. Install Python and update Termux:
    ```bash
    pkg update -y && pkg upgrade -y && pkg install python
@@ -49,6 +49,12 @@
    python ytconverter.py
    ```
 2. Follow the on-screen instructions to input the YouTube URL and choose the desired output format.
+
+## Tested on
+- Linux
+- Termux
+- Ubuntu
+- MacOs
 
 ---
  <p align="left">
