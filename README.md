@@ -2,6 +2,8 @@
 # ytconverter
 ---
 `ytconverter` is a Python-based project developed by [kaifcodec](https://github.com/kaifcodec) designed to provide a robust tool for converting YouTube videos into various formats. This tool simplifies the process of downloading and converting videos from YouTube.
+---
+
 ![IMG-20250423-WA0001](https://github.com/user-attachments/assets/ef43f4b4-0afa-4682-8c4d-7d19200a40f7)
 
 <p align="centre">
@@ -68,13 +70,6 @@
 - **Video Downloading**: Fetch videos directly from YouTube.
 - **Format Conversion**: Convert downloaded videos into different formats such as MP3, MP4, etc.
 - **Metadata Handling**: Extract and manage metadata associated with YouTube videos.
-
----
-<p align="center">
-  
-  <img src="https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif" width="400" />
-</p>
-
 
 ---
 
