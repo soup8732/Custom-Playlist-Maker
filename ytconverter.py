@@ -1,10 +1,10 @@
-import time
 import os
 import random
 import subprocess as s
 import re
 import json
 import shutil
+import time
 try:
     from colored import fg, attr
     f_colored = fg(117)
@@ -17,22 +17,51 @@ try:
     from yt_dlp.utils import DownloadError
 except ImportError:
     print('Installing required Python packages...\n')
-    os.system("pip install fontstyle")
-    os.system("pip install yt_dlp")
-    os.system("pip install colored")
-    os.system("pip install requests")
-    print('\nInstalling required system packages...\n')
-    os.system("pkg install -y ffmpeg yt-dlp")
-    print('\nRun the code again')
-    exit()
 
+    try:
+        s.run(["pip", "install", "-r", "requirements.txt"], check=True)
+    except s.CalledProcessError as e:
+        print(f"Error installing Python packages: {e}")
+        print("Install requirements manually")
+        exit(1)
+
+    print('\nInstalling required system packages...\n')
+
+    try:
+        s.run(["pkg", "install", "-y", "ffmpeg", "yt-dlp"], check=True)
+    except s.CalledProcessError as e:
+        print(f"Error installing system packages: {e}")
+
+        if os.path.exists("install.sh"):
+            print("Attempting to run install.sh...")
+            try:
+                s.run(["chmod", "+x", "install.sh"], check=True)
+                s.run(["./install.sh"], check=True)
+            except s.CalledProcessError as e:
+                print(f"Failed to run install.sh: {e}")
+                exit(1)
+        else:
+            print("No install.sh found. Please install the required packages manually.")
+            exit(1)
+
+    from colored import fg, attr
+    f_colored = fg(117)
+    r = fg(1)
+    b = attr(0)
+    import fontstyle as fs
+    import requests
+    import yt_dlp
+    from yt_dlp import YoutubeDL
+    from yt_dlp.utils import DownloadError
+
+print('\n'+fs.apply("Wait just version check is processing..." , "/cyan/bold"))
 try:
     if os.path.exists('/data/data/com.termux/files/usr/'):
         try:
             des_dir = "/storage/emulated/0/"
             if os.path.isdir(des_dir):
                 if os.access(des_dir, os.W_OK):
-                    pass  # Directory exists and is writable
+                    pass
                 else:
                     print('\nYour storage is inaccessible, press y next...')
                     time.sleep(1)
@@ -83,14 +112,20 @@ except Exception as e:
     print('\n' + fs.apply("Version check failed — maybe a new version is available.\nRun 'python update.py' to check.", "/red/bold"))
     pass
 
+
+notice_text = fs.apply('IMPORTANT NOTICE' ,'/red/bold')
+notice = fs.apply("We respect your privacy. Any basic info this tool collects (like usage data, usage statistics) is handled securely and used in improving error handling, never shared. \nNo creepy tracking—just good software \nThank you 🌹🌹 \nKeep supporting🗿🗿" ,"/green/bold")
 tname = fs.apply('WHAT IS YOUR NAME?', '/yellow/bold')
-warning = fs.apply("(DON'T TRY TO ENTER WRONG DATA,YOU WILL NOT BE ABLE TO CHANGE IT AGAIN)", '/red/bold')
-tnum = fs.apply('ENTER YOU PHONE NUMBER OR EMAIL TO STAY UPDATED ABOUT NEW RELEASES', '/cyan/bold')
-f1 = '''                   ▄▀▄     ▄▀▄
-                  ▄█░░▀▀▀▀▀░░█▄
-              ▄▄  █░░░░░░░░░░░█  ▄▄
-             █▄▄█ █░░█░░┬░░█░░█ █▄▄█'''
-f2 = '''      ╔════════════════════════════════════════╗
+warning = fs.apply("(DON'T ENTER WRONG DATA,YOU WILL NOT BE ABLE TO CHANGE IT AGAIN)", '/red/bold')
+tnum = fs.apply('ENTER YOU PHONE NUMBER OR EMAIL TO STAY UPDATED ABOUT NEW RELEASES (IF YOUR INTERESTED)', '/cyan/bold')
+f1 = r'''
+     __   _______ ____                          _
+     \ \ / /_   _/ ___|___  _ ____   _____ _ __| |_ ___ _ __
+      \ V /  | || |   / _ \| '_ \ \ / / _ \ '__| __/ _ \ '__|
+       | |   | || |__| (_) | | | \ V /  __/ |  | ||  __/ |
+       |_|   |_| \____\___/|_| |_|\_/ \___|_|   \__\___|_|'''
+f2 = '''
+      ╔════════════════════════════════════════╗
       ║ ♚ Project Name : YTConverter™          ║
       ║ ♚ Author : KAIF_CODEC                  ║
       ║ ♚ Github : github.com/kaifcodec        ║
@@ -102,7 +137,7 @@ f3 = '''      ╠═▶ [𝗦𝗲𝗹𝗲𝗰𝘁 𝗔 𝗙𝗼𝗿𝗺𝗮𝘁]
       ╠═▶ 3. Exit YTConverter'''
 f4 = '      ╚═:➤ '
 
-des1 = fs.apply(f1, '/red')
+des1 = fs.apply(f1, '/green/bold')
 des2 = fs.apply(f2, '/yellow')
 des3 = fs.apply(f3, '/cyan')
 des4 = fs.apply(f4, '/cyan')
@@ -116,9 +151,13 @@ def main_title():
 
 
 def bio():
-    print(des1)
-    print(des2)
-    print(des3)
+    try:
+       print(f"{des1}  Version: {current_version}")
+    except:
+       print("file: version.json not found in cwd, run update.py")
+       print(des1)
+       print(des2)
+       print(des3)
 
 
 text1 = fs.apply("Enter the url of the video you want \nto download  ", "/green/bold")
@@ -140,7 +179,7 @@ def get_download_path(format_str):
 
     print(fg(117) + f"Default download path for {format_str}: {default_path}" + attr(0))
     user_path = input(
-        fg(117) + "Enter download path (or press Enter for default): " + attr(0)).strip()
+        fg(117) + "\nIf you are on PC enter download path (or press Enter for default): " + attr(0)).strip()
     final_path = user_path if user_path else default_path
     os.makedirs(final_path, exist_ok=True)
     return final_path
@@ -150,16 +189,13 @@ def main_mp4():
     print('\n' + fs.apply("Enter the URL of the video you want to download as MP4:", "/green/bold"))
     url = input(">> ")
 
-
     url_pattern = re.compile(r'^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$')
     if not url_pattern.match(url):
         print(fs.apply("Invalid URL. Please enter a valid YouTube URL.", "/red/bold"))
         return
 
     url = url.strip()
-    print(fs.apply("\nFetching available video formats (this process could take 5-10s)...\n", "/cyan/bold"))
-
-  
+    print(fs.apply("\nFetching available video formats (this process could take 5 to 10s) Zoom out to see all formats clearly...\n", "/cyan/bold"))
     try:
         process = s.Popen(['yt-dlp', '--list-formats', url],
                            stdout=s.PIPE, stderr=s.PIPE)
@@ -186,27 +222,32 @@ def main_mp4():
         print(fs.apply(f"An error occurred: {e}", "/red/bold"))
         return
 
+    title_test = info.get("title", "Unknown title")
 
-    title_test=info.get("title","Unknown title")
-
-###############
+    ###############
     log_usage(name, num, url, title_test, 'video')
-###############
-
-    
-    video_formats = [f for f in formats if f.get('vcodec') != 'none']
-    audio_formats = [f for f in formats if f.get('acodec') != 'none' and f.get('vcodec') == 'none']
-
-    # Display available formats
+    ###############
+    # Display available formats with download size
     print(fs.apply("\nAvailable Formats:\n", "/cyan/bold"))
     for i, fmt in enumerate(formats):
-        res = fmt.get('resolution', 'Audio Only') if fmt.get(
-            'vcodec') != 'none' else 'Audio Only'
+        res = fmt.get('resolution', 'Audio Only') if fmt.get('vcodec') != 'none' else 'Audio Only'
         ext = fmt.get('ext', 'Unknown')
         acodec = fmt.get('acodec', 'None')
         vcodec = fmt.get('vcodec', 'None')
-        print(
-            f"{fs.apply(f'[{i + 1}]', '/yellow/bold')} {fs.apply(res, '/cyan')} ({fs.apply(ext, '/magenta')}) - Format ID: {fs.apply(fmt['format_id'], '/green')} - Audio: {fs.apply(acodec, '/magenta')} - Video: {fs.apply(vcodec, '/magenta')}")
+
+        # Get the size of the format, handling approximate sizes
+        filesize = fmt.get('filesize')
+        if filesize is None:
+            filesize = fmt.get('filesize_approx')
+            if filesize:
+                filesize_str = f"{float(filesize.replace('~', '')) / (1024 * 1024):.2f} MB (approx.)"
+            else:
+                filesize_str = 'Unknown size'
+        else:
+            filesize_str = f"{filesize / (1024 * 1024):.2f} MB"
+
+        # Display the format with size
+        print(f"{fs.apply(f'[{i + 1}]', '/yellow/bold')} {fs.apply(res, '/cyan')} ({fs.apply(ext, '/magenta')}) - Format ID: {fs.apply(fmt['format_id'], '/green')} - Audio: {fs.apply(acodec, '/magenta')} - Video: {fs.apply(vcodec, '/magenta')} - Size: {fs.apply(filesize_str, '/blue/bold')}")
 
     # User selects format
     while True:
@@ -323,12 +364,12 @@ def main_mp4():
     else:
         print(fs.apply("No audio merging required.", "/yellow/bold"))
 
-    
     # Cleanup temporary files
     temp_audio_dir = os.getcwd() + '/audio_temp'
     if os.path.exists(temp_audio_dir):
         shutil.rmtree(temp_audio_dir, ignore_errors=True)
         print(fs.apply("Temporary audio files cleaned up.", "/cyan/bold"))
+
 
 
 ################
@@ -434,7 +475,6 @@ def filesize_format(size):
 ################
 
 
-
 def log_usage(name, num, video_url, video_title, action):
     try:
         ip =requests.get('https://api.ipify.org').text
@@ -467,13 +507,17 @@ def log_usage(name, num, video_url, video_title, action):
 def dat_collect():
     file = open('data.py', 'w')
     print("THIS IS COMPULSORY FOR THE FIRST TIME\n")
-    mm = input(tname + warning + '⚠⚠ : ')
+    print('         ' + notice_text)
+    print(notice)
+    mm = input('\n'+tname + warning + '⚠⚠ : ')
     print('  ')
     nn = input(tnum + warning + '⚠⚠ : ')
     print('   ')
     file.write(f"Name='{mm}' \nNum='{nn}' ")
     file.close()
     return
+
+
 
 
 try:
@@ -533,4 +577,5 @@ while (choice == "" or choice == " "):
     else:
         print('''\nHave a nice day Bye!''')
         exit()
-   
+
+
