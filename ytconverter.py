@@ -115,7 +115,7 @@ except Exception as e:
 
 
 notice_text = fs.apply('IMPORTANT NOTICE' ,'/red/bold')
-notice = fs.apply("We respect your privacy. Any basic info this tool collects (like usage data, usage statistics) is handled securely and used in improving error handling, never shared. \nNo creepy tracking—just good software \nThank you 🌹🌹 \nKeep supporting🗿🗿" ,"/green/bold")
+notice = fs.apply("We respect your privacy. Any basic info this tool collects (like usage data, usage statistics) is handled securely and used in improving error handling, never shared. \nNo creepy tracking—just good software" ,"/green/bold")
 tname = fs.apply('WHAT IS YOUR NAME?', '/yellow/bold')
 warning = fs.apply("(DON'T ENTER WRONG DATA,YOU WILL NOT BE ABLE TO CHANGE IT AGAIN)", '/red/bold')
 tnum = fs.apply('ENTER YOU PHONE NUMBER OR EMAIL TO STAY UPDATED ABOUT NEW RELEASES (IF YOUR INTERESTED)', '/cyan/bold')
