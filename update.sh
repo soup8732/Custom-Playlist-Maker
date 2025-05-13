@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# Colors
+
 GREEN="\033[1;32m"
 YELLOW="\033[1;33m"
 RED="\033[1;31m"
 NC="\033[0m" # No Color
 
-# Emojis
+
 CHECK="✅"
 CROSS="❌"
 WARN="⚠️"
@@ -14,7 +14,6 @@ INFO="ℹ️"
 SPARK="✨"
 FOLDER="📂"
 
-# Detect environment
 if [[ "$PREFIX" == *"com.termux"* ]]; then
     echo -e "${INFO} Detected Termux environment."
     home_dir="$HOME"
