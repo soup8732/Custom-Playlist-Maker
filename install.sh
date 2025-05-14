@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Emojis
 CHECK="✅"
 CROSS="❌"
 INFO="ℹ️"
