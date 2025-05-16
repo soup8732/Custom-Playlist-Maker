@@ -1,4 +1,4 @@
-print('\n'+"Attempting to import required modules".center(100))
+print('\n'+"Attempting to import required modules".center(99))
 import os
 import random
 import subprocess as s
