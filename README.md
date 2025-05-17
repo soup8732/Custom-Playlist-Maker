@@ -108,6 +108,7 @@
 
 ## Features
 - **Video Downloading**: Fetch videos directly from YouTube.
+- **Multiple video download**: Now you can download multiple videos using the tool, just paste the urls one by one
 - **Format Conversion**: Convert downloaded videos into different formats such as MP3, MP4, etc.
 - **Metadata Handling**: Extract and manage metadata associated with YouTube videos.
 
