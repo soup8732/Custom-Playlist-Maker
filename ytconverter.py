@@ -1,4 +1,3 @@
-
 print('\n'+"Attempting to import required modules".center(99))
 from traceback import print_exc
 import os
@@ -715,7 +714,6 @@ def import_dat():
 
 def dat_collect():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    print(script_dir)
     file = open(script_dir+'/data.py', 'w')
     print("THIS IS COMPULSORY FOR THE FIRST TIME\n")
     print(notice_text.center(100)+ '\n')
