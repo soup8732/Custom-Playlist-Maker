@@ -166,9 +166,10 @@ except Exception as e:
 
 try:
     # Fetch version from GitHub
-    version_git = httpx.get(
+    response = httpx.get(
         "https://raw.githubusercontent.com/kaifcodec/ytconverter/main/version.json"
-    ).raise_for_status().json().get("version")
+    ).raise_for_status()
+    version_git = response.json().get("version")
 
     # Load local version
     with open("version.json", "r") as file:
