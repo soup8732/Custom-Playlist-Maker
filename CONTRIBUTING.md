@@ -54,7 +54,7 @@ To get you started, here’s a very rough sketch of how the backend might work, 
   - Options for format selection (e.g., MP3, MP4)
   - Quality preferences (high, medium, low, etc.)
   - Display of download progress and status
-  - Download button when ruokkk
+  - Download button when ready
 
 - On the backend side, there might be endpoints like:
   - `POST /api/download` to start the process
@@ -90,7 +90,7 @@ Use clear and concise commit messages. Follow this format:
 
 
 feat: add support for batch video downloads
-Implemented functionality to allow users to download random music according to their mood, several random quotes.
+Implemented functionality to allow users to download random music according to their mood.
 
 **Types:**
 
