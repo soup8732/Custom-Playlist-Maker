@@ -47,10 +47,10 @@ jobs:
     - name: Create dummy data.json
       shell: bash
       run: |
-        echo '{"Name": "CI User", "Num": "ci@example.com"}' > data.json
+        echo "{\"Name\": \"CI User\", \"Num\": \"ci@example.com\"}" > data.json
 
-    - name: Check for ffmpeg (usually pre-installed on GitHub runners)
-      shell: bash
+    - name: Check for ffmpeg (Windows)
+      shell: pwsh
       run: ffmpeg -version
 
     - name: Test Single MP3 Download
