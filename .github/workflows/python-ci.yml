@@ -1,4 +1,4 @@
-name: Python CI
+/name: Python CI
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
 
   test-on-windows:
     runs-on: windows-latest
-    needs: build  # Ensures syntax check passes before running full tests
+    needs: build
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -63,26 +63,49 @@ jobs:
       shell: bash
       run: |
         echo "Starting Single MP3 Download Test"
-        (echo "n"; echo "1"; echo "https://www.youtube.com/watch?v=YE7_OuSwKQY"; echo ""; echo "0") | python ytconverter.py
+        python ytconverter.py <<EOF
+n
+1
+https://www.youtube.com/watch?v=YE7_OuSwKQY
+
+0
+EOF
         echo "Single MP3 Download Test Finished"
 
     - name: Test Single MP4 Download
       shell: bash
       run: |
         echo "Starting Single MP4 Download Test"
-        (echo "n"; echo "2"; echo "https://www.youtube.com/watch?v=YE7_OuSwKQY"; echo "1"; echo "") | python ytconverter.py
+        python ytconverter.py <<EOF
+n
+2
+https://www.youtube.com/watch?v=YE7_OuSwKQY
+1
+
+EOF
         echo "Single MP4 Download Test Finished"
 
     - name: Test Multiple MP4 Download
       shell: bash
       run: |
         echo "Starting Multiple MP4 Download Test"
-        (echo "n"; echo "3"; echo "https://www.youtube.com/watch?v=YE7_OuSwKQY"; echo "https://www.youtube.com/watch?v=IBqS3t3qAg0"; echo "0"; echo "3"; echo "") | python ytconverter.py
+        python ytconverter.py <<EOF
+n
+3
+https://www.youtube.com/watch?v=YE7_OuSwKQY
+https://www.youtube.com/watch?v=IBqS3t3qAg0
+0
+3
+
+EOF
         echo "Multiple MP4 Download Test Finished"
 
     - name: Test Exit Option
       shell: bash
       run: |
         echo "Starting Exit Option Test"
-        (echo "n"; echo "4") | python ytconverter.py
+        python ytconverter.py <<EOF
+n
+4
+EOF
         echo "Exit Option Test Finished"
