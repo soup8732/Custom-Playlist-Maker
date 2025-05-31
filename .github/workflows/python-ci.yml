@@ -28,7 +28,7 @@ jobs:
 
   test-on-windows:
     runs-on: windows-latest
-    needs: build
+    needs: build  # Ensures syntax check passes before running full tests
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -49,9 +49,15 @@ jobs:
       run: |
         echo "{\"Name\": \"CI User\", \"Num\": \"ci@example.com\"}" > data.json
 
+    - name: Install ffmpeg (Windows)
+      shell: pwsh
+      run: |
+        choco install ffmpeg -y
+
     - name: Check for ffmpeg (Windows)
       shell: pwsh
-      run: ffmpeg -version
+      run: |
+        ffmpeg -version
 
     - name: Test Single MP3 Download
       shell: bash
