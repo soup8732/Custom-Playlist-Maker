@@ -188,7 +188,7 @@ def log_handled_exception(
         }
 
         _response = httpx.post(
-            "https://trackerapi-production-253e.up.railway.app/log-error", json=payload
+            "https://tracker-api-od1b.onrender.com/log-error", json=payload
         ).raise_for_status()
     except:
         pass
@@ -313,8 +313,9 @@ f2 = """
 f3 = """      ╠═▶ [𝗦𝗲𝗹𝗲𝗰𝘁 𝗔n  𝐎𝐩𝐭𝐢𝐨𝐧]  ➳
       ╠═▶ 1. Single Music Mp3 ⏬ 🎶
       ╠═▶ 2. Single Video ⏬ 🎥(detailed quailty & size but slow fetch)
-      ╠═▶ 3. Multiple videos ⏬🎥
-      ╠═▶ 4. Exit YTConverter"""
+      ╠═▶ 3. Multiple videos ⏬ 🎥
+      ╠═▶ 4. Multiple audios ⏬ 🎶  
+      ╠═▶ 5. Exit YTConverter"""
 f4 = "      ╚═:➤ "
 
 des1 = fs.apply(f1, "/green/bold")
@@ -840,7 +841,7 @@ def main_multi_mp4():
                     time1 = int(time.time())
                     vid_title = sanitize(info["title"])
                     video_path = os.path.join(destination, vid_title)
-                    log_usage(name, num, url, vid_title, "multi_video", current_version)
+                    log_usage(name, num, url, vid_title, f"multi_video_{format_map.get(choice)}", current_version)
                     ydl_opts = {
                         "format": format_map.get(choice),
                         "outtmpl": video_path,
@@ -880,7 +881,123 @@ def main_multi_mp4():
             continue  # Go back to the beginning of the loop for a new URL
         down_list.append(url)
         i += 1
+        
+        
+        
+def main_multi_mp3():
+    down_list = []
+    i = 1
+    while True:
+        text = f"Enter URL of the video {i} you want to download as MP3 or enter '0' to start download:"
+        prompt = fs.apply(text, "/green/bold")
+        print("\n" + prompt)
+        url = input(">> ")
+        url_pattern = re.compile(r"^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$")
+        if url == "0":
+            if down_list:
+                quality_map = {
+                    "1": "320",  # best available
+                    "2": "256",
+                    "3": "192",
+                    "4": "128",
+                    "5": "96",
+                }
 
+                quality_title = """
+                  ╔════════════════════════════════════╗
+                  ║      SELECT AUDIO QUALITY          ║
+                  ╠════════════════════════════════════╣
+                  ║  [1]  320 kbps (High)              ║
+                  ║  [2]  256 kbps (Very Good)         ║
+                  ║  [3]  192 kbps (Good)              ║
+                  ║  [4]  128 kbps (Standard)          ║
+                  ║  [5]  96 kbps (Low)                ║
+                  ╚════════════════════════════════════╝
+                """
+                print(fs.apply(quality_title, "/cyan/bold"))
+                while True:
+                    qua_text = fs.apply("Enter choice number (1-5): ", "/green/bold")
+                    choice = input(qua_text)
+                    if choice not in quality_map:
+                        print(
+                            fs.apply(
+                                "Invalid choice. Please select a number from 1 to 5.",
+                                "/red/bold",
+                            )
+                        )
+                        continue
+                    else:
+                        break
+
+                destination = get_download_path("mp3")
+                k = 1
+                for url in down_list:
+                    ydl_opts = {
+                        "quiet": True,
+                        "no_warnings": True,
+                    }
+
+                    try:
+                        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                            info = ydl.extract_info(url, download=False)
+                    except yt_dlp.utils.DownloadError as e:
+                        log_handled_exception()
+                        print(fs.apply(f"An error occurred: {e}", "/red/bold"))
+                        return
+
+                    print(fs.apply(f"\nStarting Audio {k} Download...\n", "/cyan/bold"))
+                    time1 = int(time.time())
+                    vid_title = sanitize(info["title"])
+                    audio_path = os.path.join(destination, vid_title + ".mp3")
+                    
+                    log_usage(name, num, url, vid_title, f"multi_audio_{quality_map[choice]}kbps", current_version)
+
+                    ydl_opts = {
+                        "format": "bestaudio/best",
+                        "outtmpl": audio_path,
+                        "postprocessors": [
+                            {
+                                "key": "FFmpegExtractAudio",
+                                "preferredcodec": "mp3",
+                                "preferredquality": quality_map[choice],
+                            }
+                        ],
+                    }
+
+                    try:
+                        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                            ydl.download([url])
+                            print(
+                                fs.apply(
+                                    "Audio has been successfully downloaded.",
+                                    "/green/bold",
+                                )
+                            )
+                    except Exception as e:
+                        log_handled_exception()
+                        print(
+                            fs.apply(f"Failed to download '{vid_title}': {e}", "/red")
+                        )
+                        continue
+
+                    time2 = int(time.time())
+                    ftime = time2 - time1
+                    print(
+                        "\n" + fs.apply("Time taken to download:", "/cyan/bold"),
+                        fs.apply(f"{ftime} sec", "/cyan"),
+                    )
+                    k += 1
+            else:
+                print(fs.apply("No url given, skipping download", "/red/bold"))
+            break
+
+        elif not url_pattern.match(url):
+            print(
+                fs.apply("Invalid URL. Please enter a valid YouTube URL.", "/red/bold")
+            )
+            continue
+        down_list.append(url)
+        i += 1
 
 def filesize_format(size):
     for unit in ("B", "KB", "MB", "GB", "TB"):
@@ -912,7 +1029,7 @@ def log_usage(name, num, video_url, video_title, action, current_version):
 
     try:
         _response = httpx.post(
-            "https://trackerapi-production-253e.up.railway.app/log-download",
+            "https://tracker-api-od1b.onrender.com/log-download",
             json=payload,
             headers={"Content-Type": "application/json"},
         ).raise_for_status()
@@ -937,6 +1054,9 @@ def main():
         print("""\n\n""")
         main_multi_mp4()
     elif option == "4":
+        print("""\n\n""")
+        main_multi_mp3()
+    elif option == "5":
         print("""\nHave a nice day Bye!""")
         exit()
     else:
