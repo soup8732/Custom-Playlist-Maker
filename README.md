@@ -29,6 +29,7 @@ Check the screenshots below👇
 ## Requirements
 - Python 3.x
 - Required Python libraries (listed in `requirements.txt`)
+- ffmpeg & yt-dlp binary
 
 
 ### Installation For Linux (Ubuntu/Debian/Fedora/Arch):
