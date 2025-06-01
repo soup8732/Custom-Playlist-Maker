@@ -75,6 +75,23 @@ cd ytconverter
 # Install dependencies
 pip install -r requirements.txt
 ```
+
+## Installation (Windows)
+
+1. Download or clone the repository:
+
+   ```powershell
+   git clone https://github.com/kaifcodec/ytconverter.git
+   cd ytconverter
+2. Open Command Prompt and run the installer batch file `ytconverter` directory:
+```powershell
+install.bat
+```
+
+3. After installation, start the program:
+```powershell
+python ytconverter.py
+```   
 ## Usage
 1. Run the main script to start the conversion process:
    ```bash
@@ -87,6 +104,7 @@ pip install -r requirements.txt
 - Termux
 - Ubuntu
 - MacOs
+- Windows 10/11
 
 ---
 ## Screenshots
