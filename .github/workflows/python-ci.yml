@@ -33,6 +33,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Run install.bat
+      shell: cmd
+      run: install.bat
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
