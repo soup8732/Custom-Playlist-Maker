@@ -1,3 +1,5 @@
+# .github/workflows/python_ci.yml
+
 name: Python CI
 
 on:
@@ -21,11 +23,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        # The script itself tries to install requirements, but it's good practice to ensure they are installed here.
-        # Check pyproject.toml or requirements.txt from your project.
-        # Assuming your dependencies are listed in 'requires-python' and 'dependencies' in the script,
-        # you might need to extract them or create a requirements.txt if not already present.
-        # For this example, let's assume dependencies like colored, fontstyle, httpx, yt-dlp are used.
+        # Install Python packages required by ytconverter.py
+        # httpx is included here as per the workflow definition.
         pip install colored fontstyle httpx yt-dlp
 
     - name: Check syntax of ytconverter.py
@@ -33,7 +32,7 @@ jobs:
 
   test-on-windows:
     runs-on: windows-latest
-    needs: build
+    needs: build # This job will only run after the 'build' job completes successfully
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -44,10 +43,10 @@ jobs:
         python-version: '3.9'
 
     - name: Install dependencies
-      shell: bash
+      shell: bash # Using bash shell on Windows for consistent syntax
       run: |
         python -m pip install --upgrade pip
-        # Same as above, ensure dependencies are installed for the Windows runner
+        # Install Python packages required for the Windows tests
         pip install colored fontstyle httpx yt-dlp
 
     - name: Create dummy data.json
@@ -56,7 +55,8 @@ jobs:
         echo "{\"Name\": \"CI User\", \"Num\": \"ci@example.com\"}" > data.json
 
     - name: Install ffmpeg (Windows)
-      shell: pwsh
+      # Using Chocolatey to install FFmpeg on Windows, which is common on GitHub Actions runners.
+      shell: pwsh # PowerShell is typically used for choco commands
       run: |
         choco install ffmpeg -y
 
@@ -65,15 +65,13 @@ jobs:
       run: |
         ffmpeg -version
 
-    # The 'n' inputs are to bypass the initial data collection and version update prompts.
-    # The empty string '' is to simulate pressing Enter at the 'Press [ENTER] to continue...' prompt.
-    # The dummy URLs are just for the input, yt-dlp will fail on them.
-
     - name: Test Single MP3 Download
       shell: bash
       run: |
         echo "Starting Single MP3 Download Test"
-        # Provide 'n' for initial prompts, then '1' for MP3, then a dummy URL, then '0' for best audio format, then '' for the continue prompt.
+        # Simulates user input for ytconverter.py using printf and piping.
+        # 'n' inputs bypass initial data collection/update prompts.
+        # '1' selects MP3, followed by a dummy URL, '0' for best audio, then an empty line for continue prompt.
         printf "n\nn\nn\n1\nhttp://www.youtube.com/watch?v=dQw4w9WgXcQ\n0\n\n" | python ytconverter.py
         echo "Single MP3 Download Test Finished"
 
@@ -81,7 +79,7 @@ jobs:
       shell: bash
       run: |
         echo "Starting Single MP4 Download Test"
-        # Provide 'n' for initial prompts, then '2' for MP4, then a dummy URL, then '1' to select the first format option, then '' for the continue prompt.
+        # 'n' inputs, '2' selects MP4, dummy URL, '1' for first format, empty line for continue.
         printf "n\nn\nn\n2\nhttp://www.youtube.com/watch?v=dQw4w9WgXcQ\n1\n\n" | python ytconverter.py
         echo "Single MP4 Download Test Finished"
 
@@ -89,7 +87,7 @@ jobs:
       shell: bash
       run: |
         echo "Starting Multiple MP4 Download Test"
-        # Provide 'n' for initial prompts, then '3' for multi-MP4, then a dummy URL, then '0' to start download for multi, then '1' for quality, then '' for the continue prompt.
+        # 'n' inputs, '3' for multi-MP4, dummy URL, '0' to start multi-download, '1' for quality, empty line for continue.
         printf "n\nn\nn\n3\nhttp://www.youtube.com/watch?v=dQw4w9WgXcQ\n0\n1\n\n" | python ytconverter.py
         echo "Multiple MP4 Download Test Finished"
 
@@ -97,6 +95,7 @@ jobs:
       shell: bash
       run: |
         echo "Starting Exit Option Test"
-        # Provide 'n' for initial prompts, then '4' to exit. No further input is needed.
+        # 'n' inputs, '4' to exit the script.
         printf "n\nn\nn\n4\n" | python ytconverter.py
         echo "Exit Option Test Finished"
+
