@@ -36,12 +36,14 @@ Check the screenshots below👇
 ## Install pypi Package (For Any)
 1. After installing latest python
 
-```bash
-pip install ytconverter
+   ```bash
+   pip install ytconverter
 
-ytconverter -S
+   ytconverter -S
+   ```
+# ⚠️ However usage of standalone ytconverter.py is recommended⚠️
+- Pypi package still in beta, Follow tge below process 👇👇
 
-```
 ### Installation For Linux (Ubuntu/Debian/Fedora/Arch):
 1. Install Python:
    ```bash
@@ -93,7 +95,7 @@ pip install -r requirements.txt
    ```powershell
    git clone https://github.com/kaifcodec/ytconverter.git
    cd ytconverter
-2. Open Command Prompt and run the installer batch file `ytconverter` directory:
+2. Open Command Prompt and run the installer batch file `ytconverter/standalone/` directory:
 ```powershell
 install.bat
 ```
