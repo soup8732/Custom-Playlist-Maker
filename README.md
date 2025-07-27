@@ -1,4 +1,3 @@
-
 ## YTConverter™
 <p align="center">
   <img src="https://img.shields.io/badge/Version-4.0.0-blueviolet?style=for-the-badge&logo=github" />
@@ -123,7 +122,7 @@ python ytconverter.py
 ---
 ## Screenshots
 <p align= "left">
- <img src="https://github.com/user-attachments/assets/12927988-08b8-457b-a82b-df5d10114027"/>
+ <img src="https://github.com/user-attachments/assets/c67be3ec-ac46-4370-b64c-d95dfc4d988f" width="600" height="600"/>
 </p>
 <p align="left">
 <img src= "https://github.com/user-attachments/assets/8e9d00ce-b698-4b1f-8870-badd5d274442" width="600" height="600"/>
