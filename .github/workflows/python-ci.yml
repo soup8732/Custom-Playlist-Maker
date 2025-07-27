@@ -28,7 +28,7 @@ jobs:
         pip install colored fontstyle httpx yt-dlp
 
     - name: Check syntax of ytconverter.py
-      run: python -m py_compile ytconverter.py
+      run: python -m py_compile standalone/ytconverter.py
 
   test-on-windows:
     runs-on: windows-latest
