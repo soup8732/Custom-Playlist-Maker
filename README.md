@@ -55,12 +55,12 @@ Check the screenshots below👇
    ```
 2. Install Git and Curl:
    ```bash
-   sudo apt install git curl -y  # Debian/Ubuntu
+   sudo apt install git -y  # Debian/Ubuntu
    ```
 3. Clone the repository:
    ```bash
    git clone https://github.com/kaifcodec/ytconverter.git
-   cd ytconverter
+   cd ytconverter/standalone/
    ```
 4. Install required Python libraries:
    ```bash
@@ -73,7 +73,6 @@ pkg update -y && pkg upgrade -y && pkg install python
 
 # Install Git and Curl
 pkg install git
-pkg install curl
 
 # Clone the repository
 git clone https://github.com/kaifcodec/ytconverter.git
@@ -103,14 +102,20 @@ install.bat
 
 4. After installation, start the program:
 ```powershell
-python ytconverter.py
+python3 ytconverter.py
 ```   
 ## Usage
 1. Run the main script to start the conversion process:
    ```bash
-   python ytconverter.py
+   python3 ytconverter.py
    ```
 2. Follow the on-screen instructions to input the YouTube URL and choose the desired output format.
+
+## Update In Linux & Termux (Recommended frequently)
+1. To update the `ytconverter` repository, run:
+   ```bash
+   ./standalone/update.sh # It also keeps your yt-dlp up-to-date 
+   ```
 
 ## Tested on
 - Linux
