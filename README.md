@@ -1,7 +1,7 @@
 
 ## YTConverter™
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-3.5.0-blueviolet?style=for-the-badge&logo=github" />
+  <img src="https://img.shields.io/badge/Version-4.0.0-blueviolet?style=for-the-badge&logo=github" />
   <img src="https://img.shields.io/github/forks/kaifcodec/ytconverter?style=for-the-badge&logo=git" />
   <img src="https://img.shields.io/github/stars/kaifcodec/ytconverter?style=for-the-badge&logo=github" />
   <img src="https://img.shields.io/github/issues/kaifcodec/ytconverter?style=for-the-badge&logo=github" />
@@ -33,7 +33,15 @@ Check the screenshots below👇
 - Required Python libraries (listed in `requirements.txt`)
 - ffmpeg & yt-dlp binary
 
+## Install pypi Package (For Any)
+1. After installing latest python
 
+```bash
+pip install ytconverter
+
+ytconverter -S
+
+```
 ### Installation For Linux (Ubuntu/Debian/Fedora/Arch):
 1. Install Python:
    ```bash
@@ -72,7 +80,7 @@ git clone https://github.com/kaifcodec/ytconverter.git
 termux-setup-storage
 
 # Navigate to the project directory
-cd ytconverter
+cd ytconverter/standalone/
 
 # Install dependencies
 pip install -r requirements.txt

@@ -59,7 +59,7 @@ else
 fi
 
 echo -e "\n${CHECK} ${GREEN}Update complete!${NC}"
-echo -e "${FOLDER} Changing into ytconverter directory..."
-cd ytconverter || { echo -e "${CROSS} ${RED}Failed to enter ytconverter directory.${NC}"; exit 1; }
+echo -e "${FOLDER} Changing into ytconverter/standalone/ directory..."
+cd ytconverter/standalone/ || { echo -e "${CROSS} ${RED}Failed to enter ytconverter directory.${NC}"; exit 1; }
 
 exec bash
