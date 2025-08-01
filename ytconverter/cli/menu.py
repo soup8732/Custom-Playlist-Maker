@@ -5,8 +5,8 @@ from pathlib import Path
 from ytconverter.cli.banner import print_banner, des4
 from ytconverter.config import load_local_version, save_user_data
 from ytconverter.core.bootstrap import ensure_dependencies, setup_termux_storage
-# from ytconverter.core.updater import run_update_script
-# from ytconverter.core.version import check_version
+from ytconverter.utils.update import update_self
+from ytconverter.core.version import check_version
 from ytconverter.downloaders import multi_mp3, multi_mp4, single_mp3, single_mp4
 from ytconverter.utils.styling import apply_style
 
@@ -14,7 +14,7 @@ ensure_dependencies()
 setup_termux_storage()
 
 # Version check
-"""local, remote = check_version()
+local, remote = check_version()
 if remote and local != remote:
     print(
         apply_style("\nA new version for the tool is available!\n", "/cyan/bold")
@@ -24,7 +24,8 @@ if remote and local != remote:
         apply_style("Update automatically? (y/n): ", "/cyan/bold")
     ).lower()
     if choice in {"y", ""}:
-        run_update_script()"""
+        update_self()
+        exit()
 
 # First-run data collection
 from ytconverter.config import load_user_data as _lud
@@ -65,7 +66,8 @@ def user_data_collect(name_lud, num_lud):
 def main_loop():
     while True:
         os.system("clear")
-        print_banner(load_local_version())
+        version, version_type = load_local_version()
+        print_banner(version+"_pypi")
         choice = input(des4).strip()
         if choice == "1":
             single_mp3.run()
@@ -94,4 +96,5 @@ if name is None:
   user_data_collect(name, num)
 else:
   pass
+
 

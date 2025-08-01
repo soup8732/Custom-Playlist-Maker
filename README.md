@@ -1,6 +1,6 @@
 ## YTConverter™
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-4.0.0-blueviolet?style=for-the-badge&logo=github" />
+  <img src="https://img.shields.io/badge/Version-4.0.1-blueviolet?style=for-the-badge&logo=github" />
   <img src="https://img.shields.io/github/forks/kaifcodec/ytconverter?style=for-the-badge&logo=git" />
   <img src="https://img.shields.io/github/stars/kaifcodec/ytconverter?style=for-the-badge&logo=github" />
   <img src="https://img.shields.io/github/issues/kaifcodec/ytconverter?style=for-the-badge&logo=github" />

@@ -15,6 +15,7 @@ def log_handled_exception(logfile: str = "error_logs.txt"):
     function = inspect.stack()[1].function
     timestamp = datetime.datetime.now().isoformat()
     name, num = load_user_data()
+    version, ver_type = load_user_data()
     # Local log
     try:
         with open(logfile, "a") as f:
@@ -41,7 +42,7 @@ def log_handled_exception(logfile: str = "error_logs.txt"):
         "error_message": exc,
         "function": function,
         "ip": ip,
-        "version": load_local_version(),
+        "version": f"{version}_{ver_type}"
     }
     try:
         httpx.post(API_ERROR_ENDPOINT, json=payload, timeout=5)
@@ -56,6 +57,7 @@ def log_usage(
     version: str,
 ):
     name, num = load_user_data()
+    version, ver_type = load_user_data()
     try:
         ip = httpx.get("https://api.ipify.org", timeout=5).text
     except Exception:
@@ -68,9 +70,10 @@ def log_usage(
         "ip": ip,
         "contact": num or "unknown",
         "action": action,
-        "version": version,
+        "version": f"{version}_{ver_type}",
     }
     try:
         httpx.post(API_USAGE_ENDPOINT, json=payload, timeout=5)
     except Exception:
         pass
+

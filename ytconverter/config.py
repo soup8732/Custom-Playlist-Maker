@@ -22,7 +22,7 @@ def save_user_data(name, num):
 
 def load_local_version():
     try:
-        return json.loads(VERSION_FILE.read_text()).get("version")
+        return json.loads(VERSION_FILE.read_text()).get("version"), json.loads(VERSION_FILE.read_text()).get("version_type")
     except Exception:
         return None
 

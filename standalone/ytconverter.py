@@ -78,15 +78,17 @@ except ImportError:
     import fontstyle as fs
     import httpx
     import yt_dlp
+
 try:
     with open("version.json", "r") as file:
         version_json = json.load(file)
         current_version = version_json.get("version")
+        version_type = version_json.get("version_type")
 except:
     current_version = "version.json not found"
-    pass
-  
-  
+    exit()
+
+
 notice_text = fs.apply("IMPORTANT NOTICE", "/red/bold")
 notice = fs.apply(
     "We respect your privacy. Any basic info this tool collects (like usage data, usage statistics) is handled securely and used in improving error handling, never shared. \nNo creepy tracking—just good software",
@@ -127,7 +129,7 @@ def import_dat():
              data = json.load(file)  # Read the JSON file
              name = data.get("Name", "null") 
              num = data.get("Num", "null")
-             
+
     except FileNotFoundError:
         pass
     return name, num
@@ -144,7 +146,7 @@ except:
         pass
 
 def log_handled_exception(
-    name=name, num=num, version=current_version, logfile="error_logs.txt"
+    name=name, num=num, version=current_version+"_"+version_type, logfile="error_logs.txt"
 ):
     function = inspect.stack()[1].function
     timestamp = datetime.datetime.now().isoformat()
@@ -290,11 +292,10 @@ except Exception:
     print(
         "\n"
         + fs.apply(
-            "Version check failed — maybe a new version is available.\nRun './update.sh' to check.",
+            "Version check failed — maybe a new version is available.\nRun './update.sh' or remove and clone the repository again from GitHub to check.",
             "/red/bold",
         )
     )
-    
 
 
 f1 = r"""
@@ -1026,7 +1027,7 @@ def log_usage(name, num, video_url, video_title, action, current_version):
         "ip": ip,
         "contact": num,
         "action": action,
-        "version": current_version,
+        "version": current_version+"_"+version_type,
     }
 
     try:
