@@ -45,7 +45,8 @@ def main():
 
     elif args.version:
         from ytconverter.config import load_local_version
-        print(f"YTConverter version: {load_local_version()}")
+        local_version, version_type = load_local_version()
+        print(f"YTConverter version: {local_version}")
         return
 
     elif args.S:

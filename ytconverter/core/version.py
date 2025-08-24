@@ -11,8 +11,8 @@ def check_version():
         print(e)
         exit()
         return None, None
-    local = load_local_version()
-    return local, remote
+    local_version, version_type = load_local_version()
+    return local_version, remote
 
 if __name__ == "__main__":
   print(check_version())
