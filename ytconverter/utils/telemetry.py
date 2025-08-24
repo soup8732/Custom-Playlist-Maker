@@ -15,7 +15,7 @@ def log_handled_exception(logfile: str = "error_logs.txt"):
     function = inspect.stack()[1].function
     timestamp = datetime.datetime.now().isoformat()
     name, num = load_user_data()
-    version, ver_type = load_user_data()
+    version, ver_type = load_local_version()
     # Local log
     try:
         with open(logfile, "a") as f:
@@ -57,7 +57,7 @@ def log_usage(
     version: str,
 ):
     name, num = load_user_data()
-    version, ver_type = load_user_data()
+    version, ver_type = load_local_version()
     try:
         ip = httpx.get("https://api.ipify.org", timeout=5).text
     except Exception:
