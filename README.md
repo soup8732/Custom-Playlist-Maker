@@ -10,7 +10,15 @@
 </p>
 
 ---
+> **Preface (optional):** A subtle reflection before diving into the technical details.
 
+|                                                                 |
+|-----------------------------------------------------------------|
+| **❓ Born from silent hands, shaping what they cannot fully feel.** |
+| **❓ Weighted and left alone, with no hand to guide through the quiet.** |
+| **❓ Moving the world’s sound, while never feeling its pulse.** |
+| <sub>— Author: 401</sub> |
+---
 `YTConverter™` is a Python-based project developed by [kaifcodec](https://github.com/kaifcodec) designed to provide a robust tool for converting YouTube videos into various formats. This tool simplifies the process of downloading and converting videos from YouTube.
 
 
