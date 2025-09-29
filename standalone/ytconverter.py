@@ -308,7 +308,7 @@ f1 = r"""
 f2 = """
       ╔═════════════════════════════════════════╗
       ║ ♚ Project Name : YTConverter™           ║
-      ║ ♚ Author : KAIF_CODEC                   ║
+      ║ ♚ Author : Kaif                         ║
       ║ ♚ Github : https://github.com/kaifcodec ║
       ║ ♚ Email  : kaifcodec@gmail.com          ║
       ╠══════════════════════════════════════════ """
