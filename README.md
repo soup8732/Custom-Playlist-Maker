@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/github/stars/kaifcodec/ytconverter?style=for-the-badge&logo=github" />
   <img src="https://img.shields.io/github/issues/kaifcodec/ytconverter?style=for-the-badge&logo=github" />
   <img src="https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge" />
-  <img src="https://img.shields.io/pypi/dm/ytconverter?label=PyPI%20Downloads&color=blue&logo=pypi" />
+ <!--- <img src="https://img.shields.io/pypi/dm/ytconverter?label=PyPI%20Downloads&color=blue&logo=pypi" /> --->
   <img src="https://static.pepy.tech/badge/ytconverter?left_color=black&right_color=brightgreen" />
 </p>
 
