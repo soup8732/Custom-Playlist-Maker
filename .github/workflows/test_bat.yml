@@ -1,4 +1,5 @@
-name: test
+# .github/workflows/python_ci.yml
+name: YTConverter CI
 
 on:
   workflow_dispatch:  # Manual trigger only
@@ -16,28 +17,41 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Verify batch file existence
+      - name: Debug repo root
         run: |
           echo Current directory: %CD%
-          dir ytconverter/standalone
+          dir /s /b
         shell: cmd
 
       - name: Run YTConverter installer
-        run: |
-          cmd /c "standalone/install.bat"
         shell: cmd
+        run: |
+          REM Primary attempt: use known path
+          if exist standalone\install.bat (
+              echo Found installer at standalone\install.bat
+              call standalone\install.bat
+          ) else (
+              echo standalone\install.bat not found, searching entire repo...
+              FOR /R %G IN (install.bat) DO (
+                  echo Found installer at %G
+                  call "%G"
+                  goto :done
+              )
+              echo No install.bat found in repo!
+          )
+          :done
 
       - name: Check ffmpeg availability
+        shell: cmd
         run: |
           where ffmpeg
           ffmpeg -version
-        shell: cmd
 
       - name: Check yt-dlp availability
+        shell: cmd
         run: |
           where yt-dlp
           yt-dlp --version
-        shell: cmd
 
       - name: Test YTConverter script
-        run: python standalone/test_script.py
+        run: python standalone/ytconverter.py
