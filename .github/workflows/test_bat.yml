@@ -1,22 +1,37 @@
-name: Test Windows Install
+# .github/workflows/python_ci.yml
+name: Python CI
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:  # Manual trigger only
 
 jobs:
-  test:
+  install-and-test:
     runs-on: windows-latest
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Run install.bat
-        run: standalone\install.bat
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Run YTConverter installer (venv + PATH fixes)
+        run: standalone/install.bat
         shell: cmd
 
-      - name: Check ffmpeg
-        run: ffmpeg --version
+      - name: Check ffmpeg availability
+        run: |
+          where ffmpeg
+          ffmpeg -version
         shell: cmd
 
-      - name: Check yt-dlp
-        run: yt-dlp --version
+      - name: Check yt-dlp availability
+        run: |
+          where yt-dlp
+          yt-dlp --version
         shell: cmd
+
+      - name: Test YTConverter script
+        run: python standalone/test_script.py
