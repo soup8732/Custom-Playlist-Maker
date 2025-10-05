@@ -17,9 +17,10 @@ jobs:
 
       - name: Run install.bat
         working-directory: ./standalone
+        shell: cmd
         run: |
           echo Running YTConverter Windows installer...
-          install.bat
+          call install.bat
 
       - name: Test yt-dlp
         shell: cmd
