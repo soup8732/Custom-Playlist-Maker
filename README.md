@@ -53,37 +53,37 @@ git clone https://github.com/kaifcodec/ytconverter.git
 cd ytconverter/standalone/
 ./install.sh # Auto-setup ffmpeg + dependencies
 ```
-## (If install.sh fails, install ffmpeg manually)
+### If install.sh fails, install ffmpeg manually
 ```bash
 sudo apt install ffmpeg       # Debian/Ubuntu  
 pkg install ffmpeg            # Termux  
 sudo dnf install ffmpeg       # Fedora  
 sudo pacman -S ffmpeg         # Arch
 ```
-## Install ytconverter from PyPI
+### Install ytconverter from PyPI
 ```bash
 pip install ytconverter
 ytconverter -S
 ```
 
-### ⚙️ Update
-## Update the repository
+## ⚙️ Update
+### Update the repository
 ```bash
 ./update.sh
 ```
-## Update PyPI package
+### Update PyPI package
 ```bash
 ytconverter -U
 
 ```
-### 🪟 Windows
-## Clone the repository
+## 🪟 Windows
+### Clone the repository
 ```bash
 git clone https://github.com/kaifcodec/ytconverter.git
 cd ytconverter/standalone/
 install.bat # Or manually install ffmpeg and add it to PATH
 ```
-## Then run:
+### Then run:
 ```bash
 python ytconverter.py
 ```
@@ -91,20 +91,6 @@ python ytconverter.py
 ⚠️ The standalone script is recommended for now.  
 PyPI version is still in beta — report issues on GitHub.
 ---
-
-## Tested on
-- Linux
-- Termux
-- Ubuntu
-- MacOs
-- Windows 10/11
-
----
-
-
-
-## Contact for any error or issue:
-- kaifcodec@gmail.com
 
 ## Features
 - **Video Downloading**: Fetch videos directly from YouTube.
@@ -132,7 +118,7 @@ Feel free to open a pull request or submit an issue.
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any questions or feedback, please open an issue or contact [kaifcodec](https://github.com/kaifcodec).
+For any questions or feedback, please open an issue or write an email on kaifcodec@gmail.com
 
 # If you found this tool helpful leave a star that will motivate me to maintain this project and add new features 
 ---
