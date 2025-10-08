@@ -30,9 +30,10 @@
 
 ---
 
+
 ## Screenshots
 <p align= "left">
- <img width="1004" height="469" alt="1000122247" src="https://github.com/user-attachments/assets/80269ce0-1443-4dc4-836f-3bf63905879b" />
+ <img width="1080" height="495" alt="1000132505" src="https://github.com/user-attachments/assets/4087d8e8-5266-4fb0-8135-a51eda1fdcc1" />
 </p>
 <p align="left">
 <img src= "https://github.com/user-attachments/assets/8e9d00ce-b698-4b1f-8870-badd5d274442" width="600" height="600"/>
