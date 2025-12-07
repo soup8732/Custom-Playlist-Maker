@@ -84,26 +84,55 @@ def download_and_trim_song(song, index, total, output_dir):
     try:
         logger.info(f"Processing [{index}/{total}]: {song['name']}")
 
-        start_sec = time_to_seconds(song['start'])
-        end_sec = time_to_seconds(song['end'])
-        duration = end_sec - start_sec
-
-        if duration <= 0:
-            raise ValueError("Invalid time range")
+        # Handle optional start and end times
+        start_sec = None
+        end_sec = None
+        
+        if song.get('start') and song['start'].strip():
+            start_sec = time_to_seconds(song['start'])
+        
+        if song.get('end') and song['end'].strip():
+            end_sec = time_to_seconds(song['end'])
+        
+        # If only end is provided, start from beginning (0)
+        if start_sec is None and end_sec is not None:
+            start_sec = 0
+        
+        # Validate time range if both are provided
+        if start_sec is not None and end_sec is not None:
+            duration = end_sec - start_sec
+            if duration <= 0:
+                raise ValueError("Invalid time range: end time must be after start time")
 
         safe_name = sanitize_filename(song['name'])
         output_file = output_dir / f"{index:02d}_{safe_name}.mp3"
 
+        # Build ffmpeg postprocessor args based on what's provided
+        postprocessor_args = []
+        
+        if start_sec is not None:
+            postprocessor_args.append(f"-ss {start_sec}")
+        
+        if start_sec is not None and end_sec is not None:
+            # If both start and end are provided, use duration
+            duration = end_sec - start_sec
+            postprocessor_args.append(f"-t {duration}")
+        # If only start is provided (no end), no -t flag means go to end
+        # If neither is provided, download full video (no postprocessor args)
+        
         cmd = [
             "yt-dlp",
             "--extract-audio",
             "--audio-format", "mp3",
             "--audio-quality", "0",
-            "--postprocessor-args", f"ffmpeg:-ss {start_sec} -t {duration}",
             "--no-playlist",
             "-o", str(output_file),
             song['url']
         ]
+        
+        # Add postprocessor args only if we need trimming
+        if postprocessor_args:
+            cmd.extend(["--postprocessor-args", f"ffmpeg:{' '.join(postprocessor_args)}"])
 
         result = subprocess.run(
             cmd,
@@ -169,7 +198,7 @@ def process_playlist():
 
         # Validate songs
         for i, song in enumerate(songs, 1):
-            required = ['name', 'url', 'start', 'end']
+            required = ['name', 'url']
             for field in required:
                 if field not in song or not song[field]:
                     return jsonify({'error': f'Song {i} missing field: {field}'}), 400

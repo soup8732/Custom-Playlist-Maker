@@ -266,8 +266,9 @@
         <div class="info-box">
             <p><strong>📝 How it works:</strong></p>
             <p>1. Add your YouTube song links below</p>
-            <p>2. Set start and end timestamps (MM:SS format, e.g., 1:30)</p>
-            <p>3. Click "Create Playlist" and download your ZIP file!</p>
+            <p>2. Optionally set start and/or end timestamps (MM:SS format, e.g., 1:30)</p>
+            <p>3. Leave timestamps empty to download the full song</p>
+            <p>4. Click "Create Playlist" and download your ZIP file!</p>
         </div>
 
         <div class="form-group">
@@ -315,14 +316,14 @@
                 </div>
                 <div class="time-inputs">
                     <div class="form-group">
-                        <label>Start Time (MM:SS)</label>
-                        <input type="text" id="start-${songCount}" placeholder="0:30">
-                        <p class="small-text">e.g., 0:30 or 1:15</p>
+                        <label>Start Time (MM:SS) <span style="color: #999; font-weight: normal;">(optional)</span></label>
+                        <input type="text" id="start-${songCount}" placeholder="0:30 (leave empty for start)">
+                        <p class="small-text">e.g., 0:30 or 1:15. Leave empty to start from beginning.</p>
                     </div>
                     <div class="form-group">
-                        <label>End Time (MM:SS)</label>
-                        <input type="text" id="end-${songCount}" placeholder="3:45">
-                        <p class="small-text">e.g., 3:45 or 5:20</p>
+                        <label>End Time (MM:SS) <span style="color: #999; font-weight: normal;">(optional)</span></label>
+                        <input type="text" id="end-${songCount}" placeholder="3:45 (leave empty for end)">
+                        <p class="small-text">e.g., 3:45 or 5:20. Leave empty to go to end.</p>
                     </div>
                 </div>
             `;
@@ -381,8 +382,8 @@
                 const start = document.getElementById(`start-${id}`).value.trim();
                 const end = document.getElementById(`end-${id}`).value.trim();
 
-                if (!name || !url || !start || !end) {
-                    showStatus(`Song ${i + 1} has missing fields!`, 'error');
+                if (!name || !url) {
+                    showStatus(`Song ${i + 1} is missing name or URL!`, 'error');
                     return;
                 }
 
