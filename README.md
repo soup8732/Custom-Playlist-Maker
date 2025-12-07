@@ -44,6 +44,61 @@
 - *Auto Update* : You can simply run `ytconverter -U` and it will update yt-dlp and ytconverter to latest version, even it can auto detect whenever there's a new release of `ytconverter`.
 
 - Many more features inside try them all...
+
+---
+## 🎵 NEW: Mehndi Playlist Converter
+
+**Create custom trimmed song playlists for events!**
+
+Perfect for weddings, mehndi events, sangeet ceremonies, and dance performances where you need specific portions of songs in a specific order.
+
+### Features:
+- 📥 Download songs from YouTube as high-quality MP3
+- ✂️ Automatically trim to your specified timestamps
+- 📦 Creates a ZIP file with all songs ready to go
+- 🔢 Songs are numbered in the order you want them played
+- 📝 Simple JSON configuration file - just copy/paste your YouTube links
+- ⚡ Efficient - downloads and trims in a single operation
+
+### Quick Start:
+```bash
+# Create example configuration
+python mehndi_playlist.py --create-example my_songs.json
+
+# Edit my_songs.json with your YouTube URLs and timestamps
+# Then run:
+python mehndi_playlist.py my_songs.json
+
+# Get your ZIP file with all trimmed songs ready!
+```
+
+### Example Configuration:
+```json
+{
+  "playlist_name": "Mehndi Celebration 2024",
+  "output_dir": "mehndi_playlist",
+  "create_zip": true,
+  "zip_name": "mehndi_songs.zip",
+  "songs": [
+    {
+      "name": "Mehendi Opening",
+      "url": "https://www.youtube.com/watch?v=VIDEO_ID",
+      "start": "0:30",
+      "end": "3:45",
+      "notes": "Opening song"
+    },
+    {
+      "name": "Dholida Dance",
+      "url": "https://www.youtube.com/watch?v=VIDEO_ID",
+      "start": "0:15",
+      "end": "2:30"
+    }
+  ]
+}
+```
+
+**📖 See [MEHNDI_PLAYLIST_README.md](MEHNDI_PLAYLIST_README.md) for complete documentation, examples, and troubleshooting.**
+
 ---
 ## Screenshots
 <p align= "left">
