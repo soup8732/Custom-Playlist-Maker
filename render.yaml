@@ -2,13 +2,12 @@ services:
   - type: web
     name: mehndi-playlist-converter
     env: python
+    runtime: python-3.11.0
     region: oregon
     plan: free
     branch: main
-    buildCommand: |
-      pip install -r requirements-web.txt
-      apt-get update && apt-get install -y ffmpeg
-    startCommand: gunicorn app:app
+    buildCommand: ./build.sh
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
