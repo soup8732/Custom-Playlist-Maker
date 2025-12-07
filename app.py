@@ -41,20 +41,40 @@ def cleanup_old_files():
     except Exception as e:
         logger.error(f"Cleanup error: {e}")
 
+def get_yt_dlp_command():
+    """Get the yt-dlp command - try direct command first, then python module"""
+    try:
+        subprocess.run(["yt-dlp", "--version"],
+                      capture_output=True, check=True, timeout=5)
+        return ["yt-dlp"]
+    except:
+        try:
+            subprocess.run(["python3", "-m", "yt_dlp", "--version"],
+                          capture_output=True, check=True, timeout=5)
+            return ["python3", "-m", "yt_dlp"]
+        except:
+            return None
+
 def check_dependencies():
     """Check if required tools are installed"""
     missing = []
 
-    try:
-        subprocess.run(["yt-dlp", "--version"],
-                      capture_output=True, check=True, timeout=5)
-    except:
+    if get_yt_dlp_command() is None:
         missing.append("yt-dlp")
 
-    try:
-        subprocess.run(["ffmpeg", "-version"],
-                      capture_output=True, check=True, timeout=5)
-    except:
+    # Check for ffmpeg - try common paths
+    ffmpeg_found = False
+    ffmpeg_paths = ["ffmpeg", "/usr/local/bin/ffmpeg", "/opt/homebrew/bin/ffmpeg"]
+    for ffmpeg_path in ffmpeg_paths:
+        try:
+            subprocess.run([ffmpeg_path, "-version"],
+                          capture_output=True, check=True, timeout=5)
+            ffmpeg_found = True
+            break
+        except:
+            continue
+    
+    if not ffmpeg_found:
         missing.append("ffmpeg")
 
     return missing
@@ -78,6 +98,48 @@ def sanitize_filename(name):
     for char in invalid_chars:
         name = name.replace(char, '')
     return name.strip()
+
+def download_with_web_client(song, index, total, output_dir, safe_name, postprocessor_args, yt_dlp_cmd):
+    """Fallback download using web client if android client fails"""
+    try:
+        output_file = output_dir / f"{index:02d}_{safe_name}.mp3"
+        
+        cmd = yt_dlp_cmd + [
+            "--extract-audio",
+            "--audio-format", "mp3",
+            "--audio-quality", "0",
+            "--no-playlist",
+            "--no-warnings",
+            "--no-progress",
+            "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "--referer", "https://www.youtube.com/",
+            # Try web client
+            "--extractor-args", "youtube:player_client=web",
+            "--retries", "2",
+            "-o", str(output_file),
+            song['url']
+        ]
+        
+        if postprocessor_args:
+            cmd.extend(["--postprocessor-args", f"ffmpeg:{' '.join(postprocessor_args)}"])
+        
+        logger.info(f"Retrying with web client: {' '.join(cmd)}")
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=600
+        )
+        
+        if result.returncode == 0 and output_file.exists():
+            logger.info(f"Successfully downloaded with web client: {output_file}")
+            return str(output_file)
+        else:
+            logger.error(f"Web client also failed: {result.stderr[:200] if result.stderr else 'Unknown error'}")
+            return None
+    except Exception as e:
+        logger.error(f"Error in web client fallback: {e}")
+        return None
 
 def download_and_trim_song(song, index, total, output_dir):
     """Download and trim a single song"""
@@ -120,12 +182,28 @@ def download_and_trim_song(song, index, total, output_dir):
         # If only start is provided (no end), no -t flag means go to end
         # If neither is provided, download full video (no postprocessor args)
         
-        cmd = [
-            "yt-dlp",
+        # Get yt-dlp command (try direct command, fallback to python module)
+        yt_dlp_cmd = get_yt_dlp_command()
+        if yt_dlp_cmd is None:
+            raise RuntimeError("yt-dlp is not available")
+        
+        # Build command with options to bypass YouTube restrictions
+        # Try android client first (often bypasses restrictions better)
+        cmd = yt_dlp_cmd + [
             "--extract-audio",
             "--audio-format", "mp3",
             "--audio-quality", "0",
             "--no-playlist",
+            "--no-warnings",
+            "--no-progress",
+            # Options to help bypass YouTube restrictions
+            "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "--referer", "https://www.youtube.com/",
+            # Try different extraction methods (android client often works better)
+            "--extractor-args", "youtube:player_client=android",
+            # Retry on failures
+            "--retries", "3",
+            "--fragment-retries", "3",
             "-o", str(output_file),
             song['url']
         ]
@@ -134,6 +212,7 @@ def download_and_trim_song(song, index, total, output_dir):
         if postprocessor_args:
             cmd.extend(["--postprocessor-args", f"ffmpeg:{' '.join(postprocessor_args)}"])
 
+        logger.info(f"Running command: {' '.join(cmd)}")
         result = subprocess.run(
             cmd,
             capture_output=True,
@@ -142,13 +221,36 @@ def download_and_trim_song(song, index, total, output_dir):
         )
 
         if result.returncode == 0 and output_file.exists():
+            logger.info(f"Successfully downloaded: {output_file}")
             return str(output_file)
         else:
-            logger.error(f"Download failed: {result.stderr[:200]}")
+            error_msg = result.stderr or result.stdout or "Unknown error"
+            logger.error(f"Download failed for {song['name']}:")
+            logger.error(f"Return code: {result.returncode}")
+            logger.error(f"Error output: {error_msg[:500]}")
+            if result.stdout:
+                logger.error(f"Stdout: {result.stdout[:500]}")
+            
+            # Try to provide a more user-friendly error message
+            error_lower = error_msg.lower()
+            if "403" in error_msg or "forbidden" in error_lower:
+                logger.warning("YouTube returned 403 Forbidden - trying with web client...")
+                # Retry with web client instead of android
+                return download_with_web_client(song, index, total, output_dir, safe_name, postprocessor_args, yt_dlp_cmd)
+            elif "private" in error_lower or "unavailable" in error_lower:
+                logger.warning("Video appears to be private or unavailable")
+            elif "not found" in error_lower or "404" in error_msg:
+                logger.warning("Video not found - check URL")
+            
             return None
 
+    except subprocess.TimeoutExpired:
+        logger.error(f"Download timed out for {song.get('name', 'unknown')}")
+        return None
     except Exception as e:
-        logger.error(f"Error processing song: {e}")
+        import traceback
+        logger.error(f"Error processing song {song.get('name', 'unknown')}: {e}")
+        logger.error(traceback.format_exc())
         return None
 
 def create_zip(files, output_dir, zip_name):
@@ -228,8 +330,9 @@ def process_playlist():
 
         if not successful_files:
             return jsonify({
-                'error': 'All songs failed to download',
-                'failed': failed_songs
+                'error': 'All songs failed to download. This may be due to YouTube restrictions, network issues, or invalid URLs. Please check the URLs and try again.',
+                'failed': failed_songs,
+                'hint': 'Try updating yt-dlp or check if the videos are accessible'
             }), 500
 
         # Create ZIP
@@ -249,8 +352,10 @@ def process_playlist():
         })
 
     except Exception as e:
-        logger.error(f"Processing error: {e}")
-        return jsonify({'error': str(e)}), 500
+        import traceback
+        error_trace = traceback.format_exc()
+        logger.error(f"Processing error: {e}\n{error_trace}")
+        return jsonify({'error': str(e), 'traceback': error_trace if app.debug else None}), 500
 
 @app.route('/download/<session_id>/<filename>')
 def download_file(session_id, filename):
@@ -279,4 +384,5 @@ def health():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
